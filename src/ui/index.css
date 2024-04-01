@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: rgba(34, 34, 34, 1);
+	--color-text: rgba(255, 255, 255, 1);
+	--color-secondary: rgba(255, 255, 255, 1);
+	--color-primary: rgba(86, 194, 228, 1);
+	--color-primary-hover: rgba(86, 194, 228, 0.2);
+	--color-code-background: rgba(75, 75, 75, 1);
+	--font-size-title: 2rem;
+	--font-weight-title: 700;
+	--font-size-details: 1rem;
+	--font-weight-details: 400;
+	--font-size-label: 0.875rem;
+	--font-weight-label: 400;
+	--font-size-input-value: 1rem;
+	--font-weight-input-value: 400;
+	--font-size-code: 0.75rem;
+	--font-weight-code: 400;
+	--font-family-atkinson-hyperlegible: "Atkinson Hyperlegible";
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Tailwind Theme Export",
+  "id": "1356006519068422176",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": [
+    "figma"
+  ],
+  "ui": "dist/src/ui/index.html",
+  "networkAccess": {
+    "allowedDomains": [
+      "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com"
+    ]
+  },
+  "documentAccess": "dynamic-page"
+}
