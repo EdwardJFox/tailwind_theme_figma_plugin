@@ -14,6 +14,6 @@ export type ExportValue = {
 
 export function exportToCss(values: ExportValue[]): string {
   return `@theme {
-  ${values.map(({ name, value, type }) => `--${type}-${name}: ${type === 'font-family' ? `"${value}"` : value}`).join(';\n\t')}
+  ${values.map(({ name, value, type }) => `--${type}-${name}: ${type === 'font-family' ? `"${value}"` : value}`).join(';\n\t')};
 }`
 }
