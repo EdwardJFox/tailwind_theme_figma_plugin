@@ -2,36 +2,81 @@ import { describe, test, expect } from 'vitest'
 import { parseFigmaNameToCssName, figmaRgbToCssRgba } from "./parsing";
 
 describe('parseFigmaNameToCssName', () => {
-  test('converts top level name into lower case and kebab case', () => {
+
+  test('converts a capitalised single word into the lowercase version', () => {
+    expect(parseFigmaNameToCssName('Color')).toBe('color');
+  });
+
+  test('keeps a lowercase single word as its lowercase version', () => {
+    expect(parseFigmaNameToCssName('color')).toBe('color');
+  });
+
+  test('converts a name with spaces into kebab case', () => {
+    expect(parseFigmaNameToCssName('top level color')).toBe('top-level-color');
+  });
+
+  test('converts a name with spaces and capitalisation into lower case and kebab case', () => {
     expect(parseFigmaNameToCssName('Top Level Color')).toBe('top-level-color');
   });
 
-  test('converts folder into lower case and kebab case', () => {
-    expect(parseFigmaNameToCssName('Primary/Darker')).toBe('primary-darker');
+  describe('Using . as a separator', () => {
+    test('converts dot name into lower case and kebab case', () => {
+      expect(parseFigmaNameToCssName('primary.darker.hover')).toBe('primary-darker-hover');
+    });
+  
+    test('converts dot name with duplicated first index for a part into lower case, kebab case', () => {
+      expect(parseFigmaNameToCssName('primary.primary')).toBe('primary');
+    });
+  
+    test('converts dot name with duplicated first index for a part and extra info into lower case, kebab case', () => {
+      expect(parseFigmaNameToCssName('primary.primary.dark')).toBe('primary-dark');
+    });
+  
+    test('converts deeply nested folder with duplicated first index for a part and extra info into lower case, kebab case', () => {
+      expect(parseFigmaNameToCssName('primary.nested.primary.dark')).toBe('primary-nested-dark');
+    });
+  
+    test('converts deeply nested folder with duplicated first index and extra info into lower case, kebab case', () => {
+      expect(parseFigmaNameToCssName('primary.nested.primary primary')).toBe('primary-nested-primary');
+    });
+  
+    test('removes non alphanumeric characters from the string', () => {
+      expect(parseFigmaNameToCssName('primary.nested.accent (dark)')).toBe('primary-nested-accent-dark');
+    });
+  
+    test('with a type, first words which are the same get removed as type will be appended on export', () => {
+      expect(parseFigmaNameToCssName('shadow.nested.accent (dark)', 'shadow')).toBe('nested-accent-dark');
+    });
   });
 
-  test('converts folder with duplicated first index for a part into lower case, kebab case', () => {
-    expect(parseFigmaNameToCssName('Primary/Primary')).toBe('primary');
-  });
-
-  test('converts folder with duplicated first index for a part and extra info into lower case, kebab case', () => {
-    expect(parseFigmaNameToCssName('Primary/Primary Dark')).toBe('primary-dark');
-  });
-
-  test('converts deeply nested folder with duplicated first index for a part and extra info into lower case, kebab case', () => {
-    expect(parseFigmaNameToCssName('Primary/Nested/Primary Dark')).toBe('primary-nested-dark');
-  });
-
-  test('converts deeply nested folder with duplicated first index and extra info into lower case, kebab case', () => {
-    expect(parseFigmaNameToCssName('Primary/Nested/Primary Primary')).toBe('primary-nested-primary');
-  });
-
-  test('removes non alphanumeric characters from the string', () => {
-    expect(parseFigmaNameToCssName('Primary/Nested/Accent (Dark)')).toBe('primary-nested-accent-dark');
-  });
-
-  test('with a type, first words which are the same get removed as type will be appended on export', () => {
-    expect(parseFigmaNameToCssName('Shadow/Nested/Accent (Dark)', 'shadow')).toBe('nested-accent-dark');
+  describe('Using / as a separator', () => {
+    test('converts folder into lower case and kebab case', () => {
+      expect(parseFigmaNameToCssName('Primary/Darker')).toBe('primary-darker');
+    });
+  
+    test('converts folder with duplicated first index for a part into lower case, kebab case', () => {
+      expect(parseFigmaNameToCssName('Primary/Primary')).toBe('primary');
+    });
+  
+    test('converts folder with duplicated first index for a part and extra info into lower case, kebab case', () => {
+      expect(parseFigmaNameToCssName('Primary/Primary Dark')).toBe('primary-dark');
+    });
+  
+    test('converts deeply nested folder with duplicated first index for a part and extra info into lower case, kebab case', () => {
+      expect(parseFigmaNameToCssName('Primary/Nested/Primary Dark')).toBe('primary-nested-dark');
+    });
+  
+    test('converts deeply nested folder with duplicated first index and extra info into lower case, kebab case', () => {
+      expect(parseFigmaNameToCssName('Primary/Nested/Primary Primary')).toBe('primary-nested-primary');
+    });
+  
+    test('removes non alphanumeric characters from the string', () => {
+      expect(parseFigmaNameToCssName('Primary/Nested/Accent (Dark)')).toBe('primary-nested-accent-dark');
+    });
+  
+    test('with a type, first words which are the same get removed as type will be appended on export', () => {
+      expect(parseFigmaNameToCssName('Shadow/Nested/Accent (Dark)', 'shadow')).toBe('nested-accent-dark');
+    });
   });
 });
 

@@ -5,14 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "bunx --bun vite",
-    "build": "tsc && bunx --bun vite build && bun run build:main",
-    "build:main": "esbuild src/main/index.ts --bundle --outfile=dist/code.js",
+    "build": "tsc && bunx --bun vite build && bun build src/main/index.ts --bundle --outfile=dist/code.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "vitest"
   },
   "dependencies": {
     "@tailwindcss/vite": "next",
+    "deepmerge": "^4.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwindcss": "next"

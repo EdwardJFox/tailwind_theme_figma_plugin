@@ -8,7 +8,7 @@ const MAX_DECIMAL_PLACES = 4;
  */
 export function parseFigmaNameToCssName(name: string, type = ""): string {
   const toReturn: string[] = [];
-  for(const part of name.split('/')) {
+  for(const part of name.split(/[/\\.]/g)) {
     // Split by space so we can compare the start of the string
     const currentLevel = part.split(' ');
     // Remove duplicate definitions

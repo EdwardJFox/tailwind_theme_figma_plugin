@@ -1,25 +1,30 @@
 import { useEffect, useState } from 'react'
+import { copyToClipboard } from '../main/copyToClipboard';
 
-type CssMessage = {
-  type: 'css';
-  css: string;
+type OutputMessage = {
+  type: 'output';
+  output: string;
+  format: 'css' | 'js';
 }
 
 type IncomingMessages = {
-  pluginMessage: CssMessage;
+  pluginMessage: OutputMessage;
 }
 
 function App() {
-  const [selectedTailwindVersion, setSelectedTailwindVersion] = useState('4');
+  const [selectedTailwindVersion, setSelectedTailwindVersion] = useState('3');
   const [baseFontSize, setBaseFontSize] = useState(16);
-  const [css, setCss] = useState<null | string>(null);
+  const [copied, setCopied] = useState(false);
+  const [handleNested, setHandleNested] = useState(false);
+  const [output, setOutput] = useState<null | string>(null);
 
   const handleExportClick = () => {
     parent.postMessage({
       pluginMessage: {
         type: 'export',
         tailwindVersion: selectedTailwindVersion,
-        baseFontSize
+        baseFontSize,
+        handleNested
       }
     }, '*')
   }
@@ -29,11 +34,16 @@ function App() {
   }
 
   const handleIncomingMessage = (event: MessageEvent<IncomingMessages>) => {
-    if (event.data.pluginMessage.type === 'css') {
-      setCss(event.data.pluginMessage.css);
+    if (event.data.pluginMessage.type === 'output') {
+      setOutput(event.data.pluginMessage.output);
     }
   }
 
+  const handleCopy = () => {
+    copyToClipboard(output!);
+    setCopied(true);
+  }
+  
   useEffect(() => {
     window.addEventListener("message", handleIncomingMessage);
     return () => window.removeEventListener("message", handleIncomingMessage);
@@ -48,10 +58,10 @@ function App() {
       </label>
       <select
         id="tailwind_version"
-        disabled
         onChange={(e) => setSelectedTailwindVersion(e.target.value)}
         className="border-2 rounded-lg border-secondary text-text px-4 py-2 w-full mb-3"
       >
+        <option value="3">Tailwind 3 - JS</option>
         <option value="4">Tailwind 4 - Alpha</option>
       </select>
 
@@ -81,9 +91,34 @@ function App() {
         </button>
       </div>
 
-      <pre className="p-1 text-text bg-code-background rounded-lg text-code overflow-hidden">
+      {
+        selectedTailwindVersion === '3' ?
+        (
+          <>
+            <label htmlFor="processNested" className="text-text flex items-center gap-x-2">
+              <input
+                type="checkbox"
+                id="processNested"
+                checked={handleNested}
+                onChange={() => setHandleNested(!handleNested)}
+              />
+              <span>Process nested colors</span>
+            </label>
+            <p className="text-sm text-text pt-2 pb-1">Place this content in your tailwind.config.js file, under either theme or theme.extend.</p>
+          </>
+        )
+          :
+          <p className="text-sm text-text pt-2 pb-1">Place this content into your index.css file.</p>
+      }
+
+      <pre className="text-text bg-code-background rounded-md text-code overflow-hidden p-1.5 relative h-28 overflow-y-auto">
         <code>
-          { css ? css : <h2 className="text-title text-text text-center py-4 font-title font-atkinson-hyperlegible">CSS goes here</h2> }
+          { output ? (
+            <>
+              <button className="text-text absolute top-2 right-2 hover:bg-white/10 rounded-sm px-2 py-1 z-10" onClick={() => handleCopy()}>{ copied ? 'Copied!' : 'Copy' }</button>
+              {output}
+            </>
+          ) : <h2 className="text-title text-text text-center py-6 font-title font-atkinson-hyperlegible">Config goes here</h2> }
         </code>
       </pre>
 

@@ -1,7 +1,7 @@
 // You can access browser APIs in the <script> tag inside "ui.html" which has a
 // full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
 
-import { ExportValue, exportToCss } from "./export";
+import { ExportValue, exportToCss, exportToJs } from "./export";
 import {
   AvailableFontTypes,
   figmaRgbToCssRgba,
@@ -12,12 +12,12 @@ import {
 } from "./parsing";
 
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__, { width: 400, height: 470 });
+figma.showUI(__html__, { width: 450, height: 570 });
 
 // Calls to "parent.postMessage" from within the HTML page will trigger this
 // callback. The callback will be passed the "pluginMessage" property of the
 // posted message.
-figma.ui.onmessage =  async (msg: {type: string, tailwindVersion: string, baseFontSize: number}) => {
+figma.ui.onmessage =  async (msg: {type: string, tailwindVersion: string, baseFontSize: number, handleNested: boolean}) => {
   // One way of distinguishing between different types of messages sent from
   // your HTML page is to use an object with a "type" property like this.
   if (msg.type === 'export') {
@@ -45,7 +45,6 @@ figma.ui.onmessage =  async (msg: {type: string, tailwindVersion: string, baseFo
     const textStyles = await figma.getLocalTextStylesAsync();
     const fontFamilies: string[] = [];
     for (const textStyle of textStyles) {
-      console.log("textStyle", textStyle);
       // Add new font families to the array
       if (!fontFamilies.includes(textStyle.fontName.family)) {
         fontFamilies.push(textStyle.fontName.family);
@@ -95,7 +94,19 @@ figma.ui.onmessage =  async (msg: {type: string, tailwindVersion: string, baseFo
       }
     }
 
-    figma.ui.postMessage({ type: 'css', css: exportToCss(exportRows) })
+    if (msg.tailwindVersion === '4') {
+      figma.ui.postMessage({
+        type: 'output',
+        output: exportToCss(exportRows),
+        format: 'css'
+      });
+    } else {
+      figma.ui.postMessage({
+        type: 'output',
+        output: JSON.stringify(exportToJs(exportRows, msg.handleNested), null, 2),
+        format: 'js'
+      });
+    }
   } else if (msg.type === 'cancel') {
     figma.closePlugin();
   }
