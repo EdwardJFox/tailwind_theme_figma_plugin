@@ -52,7 +52,7 @@ function App() {
   return (
     <div className="px-4 pt-2.5 pb-2 bg-background font-atkinson-hyperlegible min-h-full">
       <h1 className="text-title font-title text-text mb-1">Tailwind Theme Export</h1>
-      <p className="text-details text-text mb-2">A simple plugin to export your documents Local Styles to a Tailwind 4 CSS theme.</p>
+      <p className="text-details text-text mb-3 mt-1">Export your documents Local Styles to a Tailwind theme.</p>
       <label htmlFor="tailwind_version" className="text-label ml-4 text-text mb-3">
         Tailwind Version
       </label>
@@ -104,11 +104,11 @@ function App() {
               />
               <span>Process nested colors</span>
             </label>
-            <p className="text-sm text-text pt-2 pb-1">Place this content in your tailwind.config.js file, under either theme or theme.extend.</p>
+            <p className="text-sm text-text py-2">Place this content in your tailwind.config.js file, under either theme or theme.extend.</p>
           </>
         )
           :
-          <p className="text-sm text-text pt-2 pb-1">Place this content into your index.css file.</p>
+          <p className="text-sm text-text py-2">Place this content into your index.css file.</p>
       }
 
       <pre className="text-text bg-code-background rounded-md text-code overflow-hidden p-1.5 relative h-28 overflow-y-auto">
