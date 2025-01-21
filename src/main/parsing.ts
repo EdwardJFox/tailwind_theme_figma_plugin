@@ -1,4 +1,5 @@
 const MAX_DECIMAL_PLACES = 4;
+const KEYWORDS = ['background'];
 
 /**
  * Parse the incoming Figma Figma name into a nice Tailwind name
@@ -12,7 +13,11 @@ export function parseFigmaNameToCssName(name: string, type = ""): string {
     // Split by space so we can compare the start of the string
     const currentLevel = part.split(' ');
     // Remove duplicate definitions
-    if (toReturn.includes(currentLevel[0].toLowerCase()) || type === currentLevel[0].toLowerCase()) {
+    if (
+      toReturn.includes(currentLevel[0].toLowerCase()) ||
+      type === currentLevel[0].toLowerCase() ||
+      KEYWORDS.includes(currentLevel[0].toLowerCase())
+    ) {
       currentLevel.shift();
     }
     toReturn.push(
@@ -50,7 +55,7 @@ export function convertPixelsToRem(size: number, base: number): string {
 }
 
 /**
- * Change the RGB colour to a hex colour, embedding the opacity 
+ * Change the RGB colour to a css compatible RGBA colour, embedding the opacity 
  * 
  * @param rgb RGB Figma object
  * @param opacity Opacity, from 0 to 1
@@ -58,6 +63,23 @@ export function convertPixelsToRem(size: number, base: number): string {
  */
 export function figmaRgbToCssRgba(rgb: RGB, opacity = 1): string {
   return `rgba(${decimalToRgbNumber(rgb.r)}, ${decimalToRgbNumber(rgb.g)}, ${decimalToRgbNumber(rgb.b)}, ${Number(opacity.toFixed(MAX_DECIMAL_PLACES))})`;
+}
+
+
+const toHex = (value: number) => {
+  const hex = Math.round(value * 255).toString(16).padStart(2, '0');
+  return hex;
+};
+
+/**
+ * Change the RGB colour to a hex colour, embedding the opacity 
+ * 
+ * @param rgb RGB Figma object
+ * @param opacity Opacity, from 0 to 1
+ * @returns 
+ */
+export function figmaRgbToHex(rgb: RGB, opacity = 1) {
+  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}${toHex(opacity)}`;
 }
 
 export function buildBoxShadow(effect: DropShadowEffect, base: number): string {

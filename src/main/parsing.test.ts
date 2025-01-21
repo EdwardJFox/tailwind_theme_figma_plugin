@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest'
-import { parseFigmaNameToCssName, figmaRgbToCssRgba } from "./parsing";
+import { parseFigmaNameToCssName, figmaRgbToCssRgba, figmaRgbToHex } from "./parsing";
 
 describe('parseFigmaNameToCssName', () => {
 
@@ -78,6 +78,12 @@ describe('parseFigmaNameToCssName', () => {
       expect(parseFigmaNameToCssName('Shadow/Nested/Accent (Dark)', 'shadow')).toBe('nested-accent-dark');
     });
   });
+
+  describe('Removing keyword background', () => {
+    test('with a type, first words which are the same get removed as type will be appended on export', () => {
+      expect(parseFigmaNameToCssName('background.neutral.dark')).toBe('neutral-dark');
+    });
+  });
 });
 
 describe('figmaRgbToCssRgba', () => {
@@ -95,5 +101,19 @@ describe('figmaRgbToCssRgba', () => {
 
   test('passes opacity along', () => {
     expect(figmaRgbToCssRgba({ r: 1, g: 1, b: 1 }, 0.45)).toBe('rgba(255, 255, 255, 0.45)');
+  });
+});
+
+describe('figmaRgbToHex', () => {
+  test('handles black', () => {
+    expect(figmaRgbToHex({ r: 0, g: 0, b: 0 }, 1)).toBe('#000000ff');
+  });
+
+  test('handles white', () => {
+    expect(figmaRgbToHex({ r: 1, g: 1, b: 1 }, 1)).toBe('#ffffffff');
+  });
+
+  test('handles middling values', () => {
+    expect(figmaRgbToHex({ r: 0.25, g: 0.5, b: 0.75 }, 0.45)).toBe('#4080bf73');
   });
 });
